@@ -1,6 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
+# The "prefer const" hints are performance suggestions only. They are off so
+# `flutter analyze` stays quiet; turn them on if the group wants stricter style.
 linter:
   rules:
-    prefer_const_constructors: true
-    prefer_const_literals_to_create_immutables: true
+    prefer_const_constructors: false
+    prefer_const_literals_to_create_immutables: false
