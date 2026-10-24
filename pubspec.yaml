@@ -17,12 +17,26 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   # Only used once to generate the phone launcher icon (dart run flutter_launcher_icons).
   flutter_launcher_icons: ^0.13.1
+  # Only used once to generate the splash screen (dart run flutter_native_splash:create).
+  flutter_native_splash: ^2.4.0
 
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/images/logo.png
+  # Android adaptive icon: solid blue behind the house so there is no white margin.
+  adaptive_icon_background: "#75B6E7"
+  adaptive_icon_foreground: assets/images/logo_foreground.png
   remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#75B6E7"
+  image: assets/images/logo_foreground.png
+  fullscreen: true
+  android_12:
+    color: "#75B6E7"
+    image: assets/images/logo_foreground.png
+    icon_background_color: "#75B6E7"
 
 flutter:
   uses-material-design: true
