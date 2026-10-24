@@ -111,14 +111,18 @@ class RoomsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  PrimaryButton(
-                    label: 'Copy',
-                    height: 40,
-                    icon: Icons.copy_rounded,
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: property.inviteCode));
-                      showNsSnack(context, 'Invite code copied');
-                    },
+                  // PrimaryButton is full-width, so it needs a fixed width inside a Row.
+                  SizedBox(
+                    width: 112,
+                    child: PrimaryButton(
+                      label: 'Copy',
+                      height: 40,
+                      icon: Icons.copy_rounded,
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: property.inviteCode));
+                        showNsSnack(context, 'Invite code copied');
+                      },
+                    ),
                   ),
                 ],
               ),
