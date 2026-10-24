@@ -1,0 +1,28 @@
+name: nestsplit_app
+description: NestSplit - a chores-first app for roommates, with a landlord companion view.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+# Only Flutter itself is used on purpose: no third-party packages to break.
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  # To use the mockup's typeface, add the font files under assets/fonts and
+  # uncomment the block below, then set AppText.fontFamily to the same name.
+  # fonts:
+  #   - family: NestSans
+  #     fonts:
+  #       - asset: assets/fonts/NestSans-Regular.ttf
+  #       - asset: assets/fonts/NestSans-Bold.ttf
+  #         weight: 700
