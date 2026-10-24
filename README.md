@@ -11,8 +11,8 @@ Built for BatStateU ENGG 405 (Technopreneurship).
 
 | Role | Screens |
 |------|---------|
-| Tenant | Login, Home, Chores (list, detail, add), Progress, Activity, More hub, Chore swaps, Weekly recap, House rules, Members, Quick Split |
-| Landlord | Dashboard, Rooms, Rent tracker, Maintenance, Announcements, Rule templates, More hub |
+| Tenant | Login, Create account, Home, Chores (list, detail, add), Progress, Activity, More hub, Chore swaps, Weekly recap, House rules, Members, Quick Split, Profile |
+| Landlord | Dashboard, Rooms, Rent tracker, Maintenance, Announcements, Rule templates, More hub, Profile |
 
 Privacy rule: the landlord side never shows tenants' chores, fairness scores or expenses.
 
@@ -89,6 +89,21 @@ Interpretations worth knowing:
 - The mockup shows a fairness score of 62; the sample data computes 67. Scores are calculated, not hardcoded.
 - The mockup lists 6 chores; the sample data has 14 so the Home ring (9 of 14) and the recap (12 done) agree.
 - Premium / subscription / B2B pricing screens are intentionally not in the prototype.
+
+## Sign-in and accounts
+
+The login screen asks for an email and password and checks them with `AuthRepository`.
+Right now that is `MockAuthRepository` (local, in memory, **not secure**: accounts reset when the app restarts).
+
+Demo accounts for testing (fake, password `Nest1234`):
+- `ben@nestsplit.test` and `ana@nestsplit.test` (tenants)
+- `landlord@nestsplit.test` (landlord)
+
+"Create account" lets someone register as a tenant (needs the home invite code, `LKB-482` in the sample data) or as a landlord.
+The Profile tab (both roles) shows the account and offers Edit name, Change password and Log out.
+
+For real accounts, write a class that `implements AuthRepository` (for example with Firebase Authentication) and pass it:
+`AppServices(MockAppRepository(), auth: FirebaseAuthRepository())`. Never store passwords yourself and never commit keys.
 
 ## Backend
 

@@ -63,6 +63,39 @@ class HouseholdState extends ChangeNotifier {
 
   Member get currentUser => memberById(currentUserId);
 
+  // ---------- members ----------
+
+  /// Adds a new person to the household (used when a tenant signs up with the invite code).
+  Member addMember(String name) {
+    _idCounter += 1;
+    const colors = MemberColor.values;
+    final member = Member(id: 'm-new-$_idCounter', name: name.trim(), color: colors[members.length % colors.length]);
+    members = [...members, member];
+    doneThisWeek[member.id] = 0;
+    streakWeeks[member.id] = 0;
+    notifyListeners();
+    return member;
+  }
+
+  void renameMember(String id, String name) {
+    members = [
+      for (final m in members) m.id == id ? Member(id: m.id, name: name.trim(), color: m.color) : m,
+    ];
+    notifyListeners();
+  }
+
+  void removeMember(String id) {
+    members = members.where((m) => m.id != id).toList();
+    doneThisWeek.remove(id);
+    streakWeeks.remove(id);
+    notifyListeners();
+  }
+
+  void setCurrentUser(String memberId) {
+    currentUserId = memberId;
+    notifyListeners();
+  }
+
   // ---------- chores ----------
 
   int get choresDone => chores.where((c) => c.isDone).length;

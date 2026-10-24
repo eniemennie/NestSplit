@@ -4,6 +4,7 @@ import '../../state/app_services.dart';
 import '../chores/chores_screen.dart';
 import '../home/home_screen.dart';
 import '../more/more_screen.dart';
+import '../profile/profile_screen.dart';
 import '../progress/progress_screen.dart';
 
 /// Tenant app frame: four tabs (Home, Chores, Progress, More) and the floating bottom bar.
@@ -16,6 +17,7 @@ class TenantShell extends StatelessWidget {
     NavItem(Icons.checklist_rounded, 'Chores'),
     NavItem(Icons.bar_chart_rounded, 'Progress'),
     NavItem(Icons.grid_view_rounded, 'More'),
+    NavItem(Icons.person_outline_rounded, 'Profile'),
   ];
 
   @override
@@ -27,7 +29,7 @@ class TenantShell extends StatelessWidget {
         return Scaffold(
           body: IndexedStack(
             index: index,
-            children: const [HomeScreen(), ChoresScreen(), ProgressScreen(), MoreScreen()],
+            children: const [HomeScreen(), ChoresScreen(), ProgressScreen(), MoreScreen(), ProfileScreen()],
           ),
           bottomNavigationBar: NsBottomNav(
             items: _items,

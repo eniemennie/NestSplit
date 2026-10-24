@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/ns_bottom_nav.dart';
 import '../../state/app_services.dart';
+import '../profile/profile_screen.dart';
 import 'announcements_screen.dart';
 import 'landlord_dashboard_screen.dart';
 import 'landlord_more_screen.dart';
@@ -20,6 +21,7 @@ class LandlordShell extends StatelessWidget {
     NavItem(Icons.bed_rounded, 'Rooms'),
     NavItem(Icons.attach_money_rounded, 'Rent'),
     NavItem(Icons.grid_view_rounded, 'More'),
+    NavItem(Icons.person_outline_rounded, 'Profile'),
   ];
 
   @override
@@ -53,6 +55,7 @@ class LandlordShell extends StatelessWidget {
                   const RoomsScreen(),
                   const RentTrackerScreen(),
                   morePageWidget,
+                  const ProfileScreen(),
                 ],
               ),
               bottomNavigationBar: NsBottomNav(

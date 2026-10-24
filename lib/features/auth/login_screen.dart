@@ -1,47 +1,63 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/brand_logo.dart';
 import '../../core/widgets/buttons.dart';
-import '../../core/widgets/snack.dart';
-import '../../core/widgets/text_prompt.dart';
+import '../../core/utils/validators.dart';
+import '../../core/widgets/ns_text_field.dart';
+import '../../data/repositories/auth_repository.dart';
 import '../../state/app_services.dart';
+import 'register_screen.dart';
 
-/// Screen 1. Sign-in is a mock for now: it only picks the role and opens the app.
-/// TODO(backend): replace the button handlers with real authentication.
-class LoginScreen extends StatelessWidget {
+/// Screen 1: email + password sign-in. Accounts are checked by [AuthRepository]
+/// (a local mock for now, see MockAuthRepository).
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  Future<void> _join(BuildContext context, AppServices services) async {
-    final code = await showTextPrompt(
-      context,
-      title: 'Join with invite code',
-      hint: 'e.g. LKB-482',
-      confirmLabel: 'Join',
-    );
-    if (code == null || code.isEmpty || !context.mounted) return;
-    if (code.toUpperCase() == services.household.inviteCode.toUpperCase()) {
-      services.signIn(UserRole.tenant);
-    } else {
-      showNsSnack(context, 'That code does not match a home.');
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  String? _emailError;
+  String? _passwordError;
+  String? _formError;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final services = AppScope.of(context);
+    setState(() {
+      _emailError = Validators.email(_email.text);
+      _passwordError = _password.text.isEmpty ? 'Enter your password.' : null;
+      _formError = null;
+    });
+    if (_emailError != null || _passwordError != null) return;
+    setState(() => _busy = true);
+    try {
+      await services.login(_email.text, _password.text);
+    } on AuthException catch (e) {
+      if (mounted) setState(() => _formError = e.message);
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
-  Future<void> _create(BuildContext context, AppServices services) async {
-    final name = await showTextPrompt(
-      context,
-      title: 'Create a household',
-      hint: 'Household name',
-      confirmLabel: 'Create',
-    );
-    if (name == null || name.isEmpty || !context.mounted) return;
-    services.household.householdName = name;
-    services.signIn(UserRole.tenant);
+  void _openRegister() {
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const RegisterScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
-    final services = AppScope.of(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -55,42 +71,57 @@ class LoginScreen extends StatelessWidget {
               decoration: const BoxDecoration(color: AppColors.pink, shape: BoxShape.circle),
             ),
           ),
-          Positioned(
-            right: 28,
-            bottom: 250,
-            child: Transform.rotate(
-              angle: -0.14,
-              child: Container(width: 100, height: 34, color: AppColors.lime),
-            ),
-          ),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const Spacer(flex: 3),
-                  const BrandLogo(size: 130),
-                  const SizedBox(height: 18),
-                  Text('NestSplit', style: AppText.screenTitle.copyWith(fontSize: 36)),
-                  const SizedBox(height: 6),
-                  const Text('Fair chores, happy home.', style: AppText.bodyMuted),
-                  const Spacer(flex: 4),
-                  PrimaryButton(label: 'Sign in', onPressed: () => services.signIn(UserRole.tenant)),
-                  const SizedBox(height: 12),
-                  TriBandButton(label: 'Join with invite code', onPressed: () => _join(context, services)),
-                  const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () => _create(context, services),
-                    child: Text('New here? Create a household', style: AppText.caption.copyWith(color: AppColors.navy)),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: AutofillGroup(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const BrandLogo(size: 104),
+                      const SizedBox(height: 14),
+                      Text('NestSplit', style: AppText.screenTitle.copyWith(fontSize: 32)),
+                      const SizedBox(height: 4),
+                      const Text('Fair chores, happy home.', style: AppText.bodyMuted),
+                      const SizedBox(height: 26),
+                      NsTextField(
+                        controller: _email,
+                        label: 'Email',
+                        errorText: _emailError,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.email],
+                      ),
+                      const SizedBox(height: 12),
+                      NsTextField(
+                        controller: _password,
+                        label: 'Password',
+                        errorText: _passwordError,
+                        obscure: true,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _submit(),
+                        autofillHints: const [AutofillHints.password],
+                      ),
+                      if (_formError != null) ...[
+                        const SizedBox(height: 10),
+                        Text(_formError!, style: AppText.caption.copyWith(color: AppColors.errorText, fontWeight: FontWeight.w700)),
+                      ],
+                      const SizedBox(height: 18),
+                      PrimaryButton(label: _busy ? 'Signing in...' : 'Sign in', onPressed: _busy ? null : _submit),
+                      const SizedBox(height: 12),
+                      TriBandButton(label: 'Create account', onPressed: _busy ? null : _openRegister),
+                      if (kDebugMode) ...[
+                        const SizedBox(height: 14),
+                        const Text(
+                          'Demo (debug only): ben@nestsplit.test or landlord@nestsplit.test, password Nest1234',
+                          textAlign: TextAlign.center,
+                          style: AppText.caption,
+                        ),
+                      ],
+                    ],
                   ),
-                  // Interpretation: the mockup set has no landlord sign-in screen, so a small
-                  // text link is used to open the landlord view.
-                  TextButton(
-                    onPressed: () => services.signIn(UserRole.landlord),
-                    child: Text("I'm a landlord", style: AppText.caption.copyWith(color: AppColors.linkBlue, fontWeight: FontWeight.w800)),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+                ),
               ),
             ),
           ),
