@@ -15,9 +15,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  # Only used once to generate the phone launcher icon (dart run flutter_launcher_icons).
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/logo.png
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
   # To use the mockup's typeface, add the font files under assets/fonts and
   # uncomment the block below, then set AppText.fontFamily to the same name.
   # fonts:
