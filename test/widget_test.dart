@@ -90,7 +90,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('ben@nestsplit.test'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Log out'));
+    // The Log out button is below the fold of the test screen, so scroll to it first.
+    await tester.scrollUntilVisible(find.text('Log out'), 200, scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Log out').last);

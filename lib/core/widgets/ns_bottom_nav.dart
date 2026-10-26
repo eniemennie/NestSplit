@@ -66,7 +66,14 @@ class _NavButton extends StatelessWidget {
           children: [
             Icon(item.icon, color: color, size: 22),
             const SizedBox(height: 2),
-            Text(item.label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+            // FittedBox keeps the label on one line (it shrinks a little on narrow tabs or large text).
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(item.label, maxLines: 1, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+              ),
+            ),
           ],
         ),
       ),
