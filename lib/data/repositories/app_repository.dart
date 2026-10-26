@@ -44,6 +44,7 @@ class HouseholdSnapshot {
 /// Everything the landlord side needs on first load.
 class PropertySnapshot {
   const PropertySnapshot({
+    required this.id,
     required this.propertyName,
     required this.inviteCode,
     required this.rooms,
@@ -55,6 +56,7 @@ class PropertySnapshot {
     required this.recentActivity,
   });
 
+  final String id;
   final String propertyName;
   final String inviteCode;
   final List<Room> rooms;
@@ -74,7 +76,8 @@ class PropertySnapshot {
 /// The save* methods are called after the UI state has already changed.
 abstract class AppRepository {
   Future<HouseholdSnapshot> loadHousehold();
-  Future<PropertySnapshot> loadProperty();
+  /// All boarding houses the landlord manages.
+  Future<List<PropertySnapshot>> loadProperties();
 
   Future<void> saveChore(Chore chore);
   Future<void> saveSwap(SwapRequest swap);

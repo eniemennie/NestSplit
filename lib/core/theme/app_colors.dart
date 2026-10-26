@@ -19,5 +19,6 @@ class AppColors {
   static const Color infoBlue = Color(0xFFD9EAF7);
   static const Color linkBlue = Color(0xFF3B82C4);
   static const Color errorText = Color(0xFFB3261E);
+  static const Color splashBlue = Color(0xFF75B6E7);
   static const Color shadow = Color(0x141F2A44);
 }

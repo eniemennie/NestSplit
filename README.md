@@ -1,5 +1,7 @@
 # NestSplit
 
+*Split the Bill, Share the Load.*
+
 Shared-living app for housemates (chores first, expenses second) with a lightweight landlord view.
 Built for BatStateU ENGG 405 (Technopreneurship).
 
@@ -24,19 +26,18 @@ Privacy rule: the landlord side never shows tenants' chores, fairness scores or 
 
 ## Setup and run
 
-The repo contains only the Dart code (`lib/`, `test/`, `pubspec.yaml`). Generate the platform folders once:
+The repo already contains the `android/` and `ios/` folders, so no `flutter create` is needed.
 
 ```bash
-git clone <your-repo-url>
-cd nestsplit_app
-flutter create . --platforms=android,ios --project-name nestsplit_app
+git clone https://github.com/eniemennie/NestSplit.git
+cd NestSplit
 flutter pub get
-flutter run            # pick an emulator or phone when asked
+dart run flutter_launcher_icons          # once: generates the phone icon from assets/images/logo.png
+dart run flutter_native_splash:create    # once: generates the native splash
+flutter run                              # pick an emulator or phone when asked
 ```
 
-`flutter create .` keeps the existing `lib/` and `pubspec.yaml`. If it replaces `lib/main.dart`
-with the counter demo, run `git checkout lib/main.dart test/widget_test.dart`.
-Do this on one machine, then commit the generated `android/` and `ios/` folders so teammates skip this step.
+Uninstall any older copy of the app from the phone before running, so the old icon is not cached.
 
 Other commands:
 
@@ -96,14 +97,28 @@ The login screen asks for an email and password and checks them with `AuthReposi
 Right now that is `MockAuthRepository` (local, in memory, **not secure**: accounts reset when the app restarts).
 
 Demo accounts for testing (fake, password `Nest1234`):
-- `ben@nestsplit.test` and `ana@nestsplit.test` (tenants)
-- `landlord@nestsplit.test` (landlord)
+- `ben@nestsplit.test` and `ana@nestsplit.test` (tenants): use **Sign in** on the first screen
+- `landlord@nestsplit.test` (landlord): use **Landlord login** on the first screen
+
+Each door only accepts its own kind of account.
 
 "Create account" lets someone register as a tenant (needs the home invite code, `LKB-482` in the sample data) or as a landlord.
 The Profile tab (both roles) shows the account and offers Edit name, Change password and Log out.
 
 For real accounts, write a class that `implements AuthRepository` (for example with Firebase Authentication) and pass it:
 `AppServices(MockAppRepository(), auth: FirebaseAuthRepository())`. Never store passwords yourself and never commit keys.
+
+## Sample data (landlord side)
+
+Three boarding houses with 30 rooms and 23 tenants are generated in `lib/data/repositories/sample_properties.dart`:
+Lakbay Boarding House (8 rooms, code LKB-482), Sampaguita Residences (10 rooms, SMP-317) and Mabini Dormitory (12 rooms, MBN-905).
+On the landlord Dashboard or Rooms tab, tap the property name to switch between them.
+Tenants who register still join the single tenant household (invite code `LKB-482`).
+
+## Splash screen and logo
+
+The splash (`lib/features/splash/splash_screen.dart`) shows the logo, "NestSplit" and the tagline. The native splash
+(`flutter_native_splash` in `pubspec.yaml`) shows the logo on the same blue while the app starts. The logo file is `assets/images/logo.png`.
 
 ## Backend
 

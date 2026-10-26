@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/brand_logo.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/widgets/buttons.dart';
@@ -39,6 +40,8 @@ class HomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
+                  const BrandLogo(size: 40),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

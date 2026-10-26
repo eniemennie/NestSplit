@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/brand_logo.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/utils/validators.dart';
@@ -130,6 +131,15 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.logout_rounded, size: 18),
                 label: const Text('Log out', style: TextStyle(fontWeight: FontWeight.w800)),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  BrandLogo(size: 26),
+                  SizedBox(width: 8),
+                  Text('NestSplit · Split the Bill, Share the Load.', style: AppText.caption),
+                ],
               ),
             ],
           ),

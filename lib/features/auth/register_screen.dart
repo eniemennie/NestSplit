@@ -11,7 +11,9 @@ import '../../state/app_services.dart';
 
 /// Create-account form. Tenants join a home with its invite code; landlords do not need one.
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({super.key, this.initialRole = AccountRole.tenant});
+
+  final AccountRole initialRole;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -24,7 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _confirm = TextEditingController();
   final TextEditingController _code = TextEditingController();
 
-  AccountRole _role = AccountRole.tenant;
+  late AccountRole _role = widget.initialRole;
   final Map<String, String?> _errors = <String, String?>{};
   String? _formError;
   bool _busy = false;

@@ -8,6 +8,8 @@ import '../../core/utils/validators.dart';
 import '../../core/widgets/ns_text_field.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../state/app_services.dart';
+import '../../data/models/user_account.dart';
+import 'landlord_login_screen.dart';
 import 'register_screen.dart';
 
 /// Screen 1: email + password sign-in. Accounts are checked by [AuthRepository]
@@ -44,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_emailError != null || _passwordError != null) return;
     setState(() => _busy = true);
     try {
-      await services.login(_email.text, _password.text);
+      await services.login(_email.text, _password.text, expectedRole: AccountRole.tenant);
     } on AuthException catch (e) {
       if (mounted) setState(() => _formError = e.message);
     } finally {
@@ -54,6 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _openRegister() {
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const RegisterScreen()));
+  }
+
+  void _openLandlordLogin() {
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const LandlordLoginScreen()));
   }
 
   @override
@@ -83,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 14),
                       Text('NestSplit', style: AppText.screenTitle.copyWith(fontSize: 32)),
                       const SizedBox(height: 4),
-                      const Text('Fair chores, happy home.', style: AppText.bodyMuted),
+                      const Text('Split the Bill, Share the Load.', style: AppText.bodyMuted),
                       const SizedBox(height: 26),
                       NsTextField(
                         controller: _email,
@@ -111,10 +117,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       PrimaryButton(label: _busy ? 'Signing in...' : 'Sign in', onPressed: _busy ? null : _submit),
                       const SizedBox(height: 12),
                       TriBandButton(label: 'Create account', onPressed: _busy ? null : _openRegister),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _busy ? null : _openLandlordLogin,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.navy,
+                          side: const BorderSide(color: AppColors.navy, width: 1.4),
+                          minimumSize: const Size.fromHeight(54),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                        icon: const Icon(Icons.apartment_rounded, size: 20),
+                        label: const Text('Landlord login', style: TextStyle(fontWeight: FontWeight.w800)),
+                      ),
                       if (kDebugMode) ...[
                         const SizedBox(height: 14),
                         const Text(
-                          'Demo (debug only): ben@nestsplit.test or landlord@nestsplit.test, password Nest1234',
+                          'Demo (debug only): tenant ben@nestsplit.test, landlord landlord@nestsplit.test, password Nest1234',
                           textAlign: TextAlign.center,
                           style: AppText.caption,
                         ),

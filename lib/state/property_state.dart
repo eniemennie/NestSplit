@@ -11,31 +11,49 @@ class PropertyState extends ChangeNotifier {
   final AppRepository _repository;
 
   bool loaded = false;
-  String propertyName = '';
-  String inviteCode = '';
-  List<Room> rooms = <Room>[];
-  List<RentRecord> rent = <RentRecord>[];
-  List<RepairRequest> repairs = <RepairRequest>[];
-  List<Notice> notices = <Notice>[];
-  List<RuleTemplate> templates = <RuleTemplate>[];
-  List<Acceptance> acceptances = <Acceptance>[];
-  List<String> recentActivity = <String>[];
-  String selectedTemplateId = 't1';
+
+  final List<_PropertyData> _all = <_PropertyData>[];
+  int _selected = 0;
+
+  /// Names of all properties, for the property picker.
+  List<String> get propertyNames => _all.map((p) => p.name).toList();
+  List<int> get propertyRoomCounts => _all.map((p) => p.rooms.length).toList();
+  int get propertyCount => _all.length;
+  int get selectedIndex => _selected;
+
+  _PropertyData get _current => _all.isEmpty ? _empty : _all[_selected];
+  static final _PropertyData _empty = _PropertyData.empty();
+
+  // The screens read these for the property that is currently selected.
+  String get propertyName => _current.name;
+  String get inviteCode => _current.inviteCode;
+  List<Room> get rooms => _current.rooms;
+  List<RentRecord> get rent => _current.rent;
+  List<RepairRequest> get repairs => _current.repairs;
+  List<Notice> get notices => _current.notices;
+  List<RuleTemplate> get templates => _current.templates;
+  List<Acceptance> get acceptances => _current.acceptances;
+  set acceptances(List<Acceptance> value) => _current.acceptances = value;
+  List<String> get recentActivity => _current.recentActivity;
+  String get selectedTemplateId => _current.selectedTemplateId;
+  set selectedTemplateId(String value) => _current.selectedTemplateId = value;
 
   int _idCounter = 0;
 
   Future<void> load() async {
-    final snapshot = await _repository.loadProperty();
-    propertyName = snapshot.propertyName;
-    inviteCode = snapshot.inviteCode;
-    rooms = List<Room>.from(snapshot.rooms);
-    rent = List<RentRecord>.from(snapshot.rent);
-    repairs = List<RepairRequest>.from(snapshot.repairs);
-    notices = List<Notice>.from(snapshot.notices);
-    templates = List<RuleTemplate>.from(snapshot.templates);
-    acceptances = List<Acceptance>.from(snapshot.acceptances);
-    recentActivity = List<String>.from(snapshot.recentActivity);
+    final snapshots = await _repository.loadProperties();
+    _all
+      ..clear()
+      ..addAll(snapshots.map(_PropertyData.fromSnapshot));
+    _selected = 0;
     loaded = true;
+    notifyListeners();
+  }
+
+  /// Switches the whole landlord side to another boarding house.
+  void selectProperty(int index) {
+    if (index < 0 || index >= _all.length || index == _selected) return;
+    _selected = index;
     notifyListeners();
   }
 
@@ -127,4 +145,58 @@ class PropertyState extends ChangeNotifier {
     _idCounter += 1;
     return '$prefix-new-$_idCounter';
   }
+}
+
+/// Editable copy of one boarding house's data.
+class _PropertyData {
+  _PropertyData({
+    required this.name,
+    required this.inviteCode,
+    required this.rooms,
+    required this.rent,
+    required this.repairs,
+    required this.notices,
+    required this.templates,
+    required this.acceptances,
+    required this.recentActivity,
+  });
+
+  factory _PropertyData.fromSnapshot(PropertySnapshot s) {
+    return _PropertyData(
+      name: s.propertyName,
+      inviteCode: s.inviteCode,
+      rooms: List<Room>.from(s.rooms),
+      rent: List<RentRecord>.from(s.rent),
+      repairs: List<RepairRequest>.from(s.repairs),
+      notices: List<Notice>.from(s.notices),
+      templates: List<RuleTemplate>.from(s.templates),
+      acceptances: List<Acceptance>.from(s.acceptances),
+      recentActivity: List<String>.from(s.recentActivity),
+    );
+  }
+
+  factory _PropertyData.empty() {
+    return _PropertyData(
+      name: '',
+      inviteCode: '',
+      rooms: <Room>[],
+      rent: <RentRecord>[],
+      repairs: <RepairRequest>[],
+      notices: <Notice>[],
+      templates: <RuleTemplate>[],
+      acceptances: <Acceptance>[],
+      recentActivity: <String>[],
+    );
+  }
+
+  final String name;
+  final String inviteCode;
+  final List<Room> rooms;
+  final List<RentRecord> rent;
+  final List<RepairRequest> repairs;
+  final List<Notice> notices;
+  final List<RuleTemplate> templates;
+  List<Acceptance> acceptances;
+  final List<String> recentActivity;
+  String selectedTemplateId = 't1';
 }

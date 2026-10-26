@@ -42,8 +42,18 @@ class AppServices {
 
   /// Checks the email and password, then opens the tenant or landlord side.
   /// Throws [AuthException] with a message that is safe to show.
-  Future<void> login(String email, String password) async {
+  ///
+  /// [expectedRole] is set by the two sign-in screens so a tenant cannot use the
+  /// landlord door and the other way round.
+  Future<void> login(String email, String password, {AccountRole? expectedRole}) async {
     final acc = await auth.signIn(email: email, password: password);
+    if (expectedRole != null && acc.role != expectedRole) {
+      throw AuthException(
+        expectedRole == AccountRole.tenant
+            ? 'This is a landlord account. Use "Landlord login" instead.'
+            : 'This is a tenant account. Use "Sign in" on the first screen.',
+      );
+    }
     _enter(acc);
   }
 

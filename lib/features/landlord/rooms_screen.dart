@@ -49,6 +49,7 @@ class RoomsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             NsCard(
+              onTap: property.propertyCount > 1 ? () => showPropertyPicker(context, property) : null,
               child: Row(
                 children: [
                   const IconTile(icon: Icons.apartment_rounded, background: AppColors.blue, size: 44),
@@ -63,6 +64,7 @@ class RoomsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (property.propertyCount > 1) const Icon(Icons.unfold_more_rounded, color: AppColors.navy),
                 ],
               ),
             ),

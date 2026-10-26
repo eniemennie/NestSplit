@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/brand_logo.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
 import '../../core/utils/money.dart';
@@ -39,7 +40,15 @@ class LandlordDashboardScreen extends StatelessWidget {
             LandlordHeader(
               overline: 'Landlord view',
               title: property.propertyName,
-              trailing: const SquareIconButton(icon: Icons.notifications_none_rounded, showDot: true, onPressed: null),
+              onTitleTap: property.propertyCount > 1 ? () => showPropertyPicker(context, property) : null,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  BrandLogo(size: 38),
+                  SizedBox(width: 8),
+                  SquareIconButton(icon: Icons.notifications_none_rounded, showDot: true, onPressed: null),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             NsCard(

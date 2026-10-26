@@ -6,6 +6,7 @@ import '../models/landlord_models.dart';
 import '../models/member.dart';
 import '../models/swap_request.dart';
 import 'app_repository.dart';
+import 'sample_properties.dart';
 
 /// TEMPORARY DATA. Everything below is sample data matching the mockup so the app
 /// can run without a backend. Replace by implementing [AppRepository] with a real
@@ -66,47 +67,8 @@ class MockAppRepository implements AppRepository {
   }
 
   @override
-  Future<PropertySnapshot> loadProperty() async {
-    return PropertySnapshot(
-      propertyName: 'Lakbay Boarding House',
-      inviteCode: 'LKB-482',
-      rooms: const [
-        Room(number: 1, tenant: ana, status: RentStatus.paid, subtitle: 'Paid · through Oct 31'),
-        Room(number: 2, tenant: ben, status: RentStatus.late, subtitle: 'Rent due Oct 5'),
-        Room(number: 3, tenant: carlo, status: RentStatus.paid, subtitle: 'Paid · through Oct 31'),
-        Room(number: 4, tenant: dani, status: RentStatus.paid, subtitle: 'Paid · through Oct 31'),
-        Room(number: 5, status: RentStatus.vacant, subtitle: 'Ready to rent'),
-        Room(number: 6, status: RentStatus.vacant, subtitle: 'Ready to rent'),
-      ],
-      rent: const [
-        RentRecord(id: 'rt1', roomNumber: 1, tenant: ana, amountCentavos: 800000, dueLabel: 'Due Oct 1', status: RentStatus.paid),
-        RentRecord(id: 'rt2', roomNumber: 2, tenant: ben, amountCentavos: 800000, dueLabel: 'Due Oct 5', status: RentStatus.late),
-        RentRecord(id: 'rt3', roomNumber: 3, tenant: carlo, amountCentavos: 800000, dueLabel: 'Due Oct 1', status: RentStatus.paid),
-        RentRecord(id: 'rt4', roomNumber: 4, tenant: dani, amountCentavos: 800000, dueLabel: 'Due Oct 1', status: RentStatus.paid),
-        RentRecord(id: 'rt5', roomNumber: 1, tenant: ana, amountCentavos: 800000, dueLabel: 'Next rent · Due Nov 1', status: RentStatus.due, isCurrentMonth: false),
-      ],
-      repairs: const [
-        RepairRequest(id: 'rp1', title: 'Leaking tap', detail: 'Room 3 · Carlo · Oct 20', stage: RepairStage.reported),
-        RepairRequest(id: 'rp2', title: 'Window latch', detail: 'Room 1 · Ana · Oct 18', stage: RepairStage.inProgress),
-        RepairRequest(id: 'rp3', title: 'Hallway light', detail: 'Room 4 · Fixed Oct 16', stage: RepairStage.fixed),
-      ],
-      notices: const [
-        Notice(id: 'n1', title: 'Water interruption', dateLabel: 'Oct 18 · All tenants', body: 'Water service will be paused tomorrow, 9 AM–12 PM, for tank cleaning.'),
-        Notice(id: 'n2', title: 'Quiet hours reminder', dateLabel: 'Oct 12 · All tenants', body: 'Please keep shared spaces quiet after 10 PM. Thank you!'),
-      ],
-      templates: const [
-        RuleTemplate(id: 't1', title: 'Quiet hours', subtitle: 'Quiet after 10 PM'),
-        RuleTemplate(id: 't2', title: 'Shared spaces', subtitle: 'Keep shared areas tidy'),
-        RuleTemplate(id: 't3', title: 'Guest policy', subtitle: 'Visitors sign in'),
-      ],
-      acceptances: const [
-        Acceptance(tenant: ana, accepted: true),
-        Acceptance(tenant: ben, accepted: false),
-        Acceptance(tenant: carlo, accepted: true),
-        Acceptance(tenant: dani, accepted: false),
-      ],
-      recentActivity: const ['Ana paid rent for Room 1'],
-    );
+  Future<List<PropertySnapshot>> loadProperties() async {
+    return SampleProperties.all(ana: ana, ben: ben, carlo: carlo, dani: dani);
   }
 
   // The mock repository keeps nothing; the in-memory state classes hold the data.

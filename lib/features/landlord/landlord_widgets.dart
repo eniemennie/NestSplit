@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
+import '../../state/property_state.dart';
 
 /// Page heading used on landlord screens: small caps line above a bold title.
 class LandlordHeader extends StatelessWidget {
-  const LandlordHeader({super.key, required this.overline, required this.title, this.trailing});
+  const LandlordHeader({super.key, required this.overline, required this.title, this.trailing, this.onTitleTap});
 
   final String overline;
   final String title;
   final Widget? trailing;
 
+  /// When set, the title becomes a button (used to switch boarding house).
+  final VoidCallback? onTitleTap;
+
   @override
   Widget build(BuildContext context) {
+    final titleText = Text(title, style: AppText.screenTitle.copyWith(fontSize: 26));
     return Row(
       children: [
         Expanded(
@@ -20,7 +25,19 @@ class LandlordHeader extends StatelessWidget {
             children: [
               Text(overline.toUpperCase(), style: AppText.overline),
               const SizedBox(height: 2),
-              Text(title, style: AppText.screenTitle.copyWith(fontSize: 26)),
+              if (onTitleTap == null)
+                titleText
+              else
+                InkWell(
+                  onTap: onTitleTap,
+                  child: Row(
+                    children: [
+                      Flexible(child: titleText),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.unfold_more_rounded, color: AppColors.navy),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -65,4 +82,44 @@ class LandlordBackRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Bottom sheet to pick which boarding house the landlord screens show.
+Future<void> showPropertyPicker(BuildContext context, PropertyState property) {
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: AppColors.white,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (sheetContext) {
+      final names = property.propertyNames;
+      final counts = property.propertyRoomCounts;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Your boarding houses', style: AppText.sectionTitle),
+              const SizedBox(height: 10),
+              for (var i = 0; i < names.length; i++)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    property.selectProperty(i);
+                    Navigator.of(sheetContext).pop();
+                  },
+                  leading: const Icon(Icons.apartment_rounded, color: AppColors.navy),
+                  title: Text(names[i], style: AppText.cardTitle),
+                  subtitle: Text('${counts[i]} rooms', style: AppText.caption),
+                  trailing: i == property.selectedIndex
+                      ? const Icon(Icons.check_circle_rounded, color: AppColors.navy)
+                      : const Icon(Icons.radio_button_unchecked_rounded, color: AppColors.muted),
+                ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
