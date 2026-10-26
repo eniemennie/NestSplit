@@ -17,8 +17,6 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   # Only used once to generate the phone launcher icon (dart run flutter_launcher_icons).
   flutter_launcher_icons: ^0.13.1
-  # Only used once to generate the splash screen (dart run flutter_native_splash:create).
-  flutter_native_splash: ^2.4.0
 
 flutter_launcher_icons:
   android: true
@@ -28,14 +26,6 @@ flutter_launcher_icons:
   adaptive_icon_background: "#75B6E7"
   adaptive_icon_foreground: assets/images/logo_foreground.png
   remove_alpha_ios: true
-
-flutter_native_splash:
-  # Plain off-white like the prototype; the Flutter splash then builds the house piece by piece.
-  color: "#F5F6F8"
-  fullscreen: true
-  android_12:
-    color: "#F5F6F8"
-    icon_background_color: "#F5F6F8"
 
 flutter:
   uses-material-design: true

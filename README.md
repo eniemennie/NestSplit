@@ -33,7 +33,6 @@ git clone https://github.com/eniemennie/NestSplit.git
 cd NestSplit
 flutter pub get
 dart run flutter_launcher_icons          # once: generates the phone icon from assets/images/logo.png
-dart run flutter_native_splash:create    # once: generates the native splash
 flutter run                              # pick an emulator or phone when asked
 ```
 
@@ -115,10 +114,12 @@ Lakbay Boarding House (8 rooms, code LKB-482), Sampaguita Residences (10 rooms, 
 On the landlord Dashboard or Rooms tab, tap the property name to switch between them.
 Tenants who register still join the single tenant household (invite code `LKB-482`).
 
-## Splash screen and logo
+## Splash screen
 
-The splash (`lib/features/splash/splash_screen.dart`) shows the logo, "NestSplit" and the tagline. The native splash
-(`flutter_native_splash` in `pubspec.yaml`) shows the logo on the same blue while the app starts. The logo file is `assets/images/logo.png`.
+The splash replicates the clickable prototype: the house builds itself piece by piece, then the name and tagline fade in
+(`lib/features/splash/splash_screen.dart`, 2.7 s, then a 0.25 s fade to the login screen).
+The phone's own start screen is plain off-white (`android/app/src/main/res/...`, `ios/Runner/Base.lproj/LaunchScreen.storyboard`) so no logo image shows before the animation.
+The logo image `assets/images/logo.png` is still used for the launcher icon, login and Profile screens.
 
 ## Backend
 

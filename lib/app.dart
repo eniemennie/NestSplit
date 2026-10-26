@@ -73,11 +73,11 @@ class _SplashGateState extends State<_SplashGate> {
 
   @override
   Widget build(BuildContext context) {
-    // Cross-fade from the splash to the login (or app) screen.
+    // Fade from the splash to the login (or app) screen.
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 450),
-      switchInCurve: Curves.easeOut,
-      switchOutCurve: Curves.easeIn,
+      duration: const Duration(milliseconds: 250), // same as the prototype's screen fade
+      switchInCurve: Curves.ease,
+      switchOutCurve: Curves.ease,
       child: _splashVisible
           ? SplashScreen(
               key: const ValueKey('splash'),
