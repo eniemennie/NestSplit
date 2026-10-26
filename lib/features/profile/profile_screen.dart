@@ -138,7 +138,9 @@ class ProfileScreen extends StatelessWidget {
                 children: const [
                   BrandLogo(size: 26),
                   SizedBox(width: 8),
-                  Text('NestSplit · Split the Bill, Share the Load.', style: AppText.caption),
+                  Flexible(
+                    child: Text('NestSplit · Split the Bill, Share the Load.', textAlign: TextAlign.center, style: AppText.caption),
+                  ),
                 ],
               ),
             ],
