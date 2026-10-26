@@ -8,6 +8,9 @@ class AppInfo {
   AppInfo._();
   static const String name = 'NestSplit';
   static const String tagline = 'Split the Bill, Share the Load.';
+
+  /// Shown on the login screen and Profile so you can tell which build is installed.
+  static const String version = '0.2.0 (prototype splash)';
 }
 
 /// Splash from the clickable prototype: the house builds itself piece by piece

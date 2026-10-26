@@ -12,6 +12,7 @@ import '../../core/widgets/text_prompt.dart';
 import '../../data/models/user_account.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../state/app_services.dart';
+import '../splash/splash_screen.dart';
 
 /// Profile tab (both roles): who is signed in, edit name, change password, log out.
 class ProfileScreen extends StatelessWidget {
@@ -139,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                   BrandLogo(size: 26),
                   SizedBox(width: 8),
                   Flexible(
-                    child: Text('NestSplit · Split the Bill, Share the Load.', textAlign: TextAlign.center, style: AppText.caption),
+                    child: Text('NestSplit v${AppInfo.version} · Split the Bill, Share the Load.', textAlign: TextAlign.center, style: AppText.caption),
                   ),
                 ],
               ),

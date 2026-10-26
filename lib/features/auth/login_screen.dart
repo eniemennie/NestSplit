@@ -9,6 +9,7 @@ import '../../core/widgets/ns_text_field.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../state/app_services.dart';
 import '../../data/models/user_account.dart';
+import '../splash/splash_screen.dart';
 import 'landlord_login_screen.dart';
 import 'register_screen.dart';
 
@@ -129,6 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: const Icon(Icons.apartment_rounded, size: 20),
                         label: const Text('Landlord login', style: TextStyle(fontWeight: FontWeight.w800)),
                       ),
+                      const SizedBox(height: 14),
+                      const Text('NestSplit v${AppInfo.version}', style: AppText.caption),
                       if (kDebugMode) ...[
                         const SizedBox(height: 14),
                         const Text(
