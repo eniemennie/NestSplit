@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text.dart';
@@ -109,10 +108,6 @@ class _LandlordLoginScreenState extends State<LandlordLoginScreen> {
                   onPressed: _busy ? null : _openRegister,
                   child: Text('New landlord? Create account', style: AppText.caption.copyWith(color: AppColors.linkBlue, fontWeight: FontWeight.w800)),
                 ),
-                if (kDebugMode) ...[
-                  const SizedBox(height: 8),
-                  const Text('Demo (debug only): landlord@nestsplit.test, password Nest1234', textAlign: TextAlign.center, style: AppText.caption),
-                ],
               ],
             ),
           ),
