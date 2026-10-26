@@ -116,10 +116,11 @@ Tenants who register still join the single tenant household (invite code `LKB-48
 
 ## Splash screen
 
-The splash replicates the clickable prototype: the house builds itself piece by piece, then the name and tagline fade in
-(`lib/features/splash/splash_screen.dart`, 2.7 s, then a 0.25 s fade to the login screen).
-The phone's own start screen is plain off-white (`android/app/src/main/res/...`, `ios/Runner/Base.lproj/LaunchScreen.storyboard`) so no logo image shows before the animation.
-The logo image `assets/images/logo.png` is still used for the launcher icon, login and Profile screens.
+A simple static splash (`lib/features/splash/splash_screen.dart`): logo, "NestSplit", the blue/pink/lime band and the tagline
+"Split the Bill, Share the Load." on the app's off-white background. It stays for 1.8 s, then fades to the login screen.
+It has no animation on purpose, so it looks the same on every phone.
+The phone's own start screen is plain off-white (`android/app/src/main/res/...`, `ios/Runner/Base.lproj/LaunchScreen.storyboard`).
+The logo file is `assets/images/logo.png`.
 
 ## Backend
 

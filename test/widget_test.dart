@@ -40,11 +40,12 @@ void main() {
     expect(find.text('Hi, Ben'), findsOneWidget);
   });
 
-  testWidgets('splash shows name and tagline, then the login screen', (tester) async {
+  testWidgets('splash shows logo text and tagline, then the login screen', (tester) async {
     await _start(tester, splash: true);
-    await tester.pump(const Duration(milliseconds: 1500));
     expect(find.text('NestSplit'), findsOneWidget);
     expect(find.text('Split the Bill, Share the Load.'), findsOneWidget);
+    // The splash waits 1.8 s, then fades to the login screen.
+    await tester.pump(const Duration(milliseconds: 1900));
     await tester.pumpAndSettle();
     expect(find.text('Landlord login'), findsOneWidget);
   });
