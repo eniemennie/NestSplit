@@ -114,13 +114,6 @@ Lakbay Boarding House (8 rooms, code LKB-482), Sampaguita Residences (10 rooms, 
 On the landlord Dashboard or Rooms tab, tap the property name to switch between them.
 Tenants who register still join the single tenant household (invite code `LKB-482`).
 
-## Splash screen
-
-A simple static splash (`lib/features/splash/splash_screen.dart`): the logo centered on the brand blue (`#75B6E7`). It stays for 1.8 s,
-then fades to the login screen. It has no animation on purpose, so it looks the same on every phone.
-The phone's own start screen uses the same blue (`android/app/src/main/res/values/colors.xml`, `ios/Runner/Base.lproj/LaunchScreen.storyboard`),
-so there is no flash between the two. The logo files are `assets/images/logo.png` and `assets/images/logo_foreground.png`.
-
 ## Backend
 
 There is no backend yet. `MockAppRepository` returns sample data and keeps changes in memory only.
