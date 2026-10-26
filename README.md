@@ -32,10 +32,10 @@ The repo already contains the `android/` and `ios/` folders, so no `flutter crea
 git clone https://github.com/eniemennie/NestSplit.git
 cd NestSplit
 flutter pub get
-dart run flutter_launcher_icons          # once: generates the phone icon from assets/images/logo.png
 flutter run                              # pick an emulator or phone when asked
 ```
 
+The launcher icon files (Android and iOS) are already committed. If you change `assets/images/logo.png`, regenerate them with `dart run flutter_launcher_icons`.
 Uninstall any older copy of the app from the phone before running, so the old icon is not cached.
 
 Other commands:
