@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 12+ system splash: off-white with an empty icon, so no logo appears before the Flutter splash. -->
+    <!-- Android 12+ system splash: brand blue with an empty icon, so it matches the Flutter splash. -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowSplashScreenBackground">@color/splash_background</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_empty</item>
