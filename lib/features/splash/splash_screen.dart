@@ -10,9 +10,13 @@ class AppInfo {
   static const String tagline = 'Split the Bill, Share the Load.';
 }
 
-/// Splash from the clickable prototype: the house builds itself piece by piece
-/// (roof, walls, door, then two sparkles), then the name and tagline fade in.
-/// Total length matches the prototype (2.7 s). [onFinished] is called once at the end.
+/// Launch animation (about 3.4 s), in this order:
+///  1. soft brand shapes drift in behind,
+///  2. the house builds itself piece by piece (roof, walls, door, sparkles) and settles,
+///  3. "NestSplit" is revealed left to right,
+///  4. the blue / pink / lime band grows under the name,
+///  5. the tagline fades up.
+/// [onFinished] is called once at the end; the app then cross-fades to the next screen.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.onFinished});
 
@@ -23,14 +27,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  static const double _totalSeconds = 2.7;
+  static const double _totalSeconds = 3.4;
 
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2700));
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 3400));
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) widget.onFinished();
     });
@@ -43,16 +47,23 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  /// 0..1 progress of an animation that starts at [delay] seconds and lasts [duration].
-  double _progress(double seconds, double delay, double duration) {
-    return ((seconds - delay) / duration).clamp(0.0, 1.0);
+  /// 0..1 progress of a step that starts at [delay] seconds and lasts [duration], eased by [curve].
+  double _step(double seconds, double delay, double duration, [Curve curve = Curves.easeOutCubic]) {
+    return curve.transform(((seconds - delay) / duration).clamp(0.0, 1.0));
   }
 
-  Widget _fadeUp(double seconds, double delay, Widget child) {
-    final e = Curves.ease.transform(_progress(seconds, delay, 0.5));
-    return Opacity(
-      opacity: e,
-      child: Transform.translate(offset: Offset(0, 10 * (1 - e)), child: child),
+  Widget _shape(double seconds, double delay, Alignment alignment, Widget shape) {
+    final e = _step(seconds, delay, 0.9);
+    final drift = math.sin(seconds * 1.4 + delay * 5) * 4;
+    return Align(
+      alignment: alignment,
+      child: Opacity(
+        opacity: e * 0.9,
+        child: Transform.translate(
+          offset: Offset(0, (1 - e) * 24 + drift),
+          child: Transform.scale(scale: 0.6 + 0.4 * e, child: shape),
+        ),
+      ),
     );
   }
 
@@ -60,36 +71,134 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            final seconds = _controller.value * _totalSeconds;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomPaint(
-                  size: const Size(150, 150 * 110 / 120),
-                  painter: _HousePainter(seconds),
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final seconds = _controller.value * _totalSeconds;
+
+          // The house pulses very slightly once it is built.
+          final settle = _step(seconds, 1.55, 0.6, Curves.linear);
+          final houseScale = 1 + 0.045 * math.sin(math.pi * settle);
+
+          final nameReveal = _step(seconds, 1.25, 0.8);
+          final band = _step(seconds, 1.95, 0.6, Curves.easeOutBack);
+          final tagline = _step(seconds, 2.3, 0.6);
+
+          return Stack(
+            children: [
+              // Soft decoration, same shapes as the login screen.
+              _shape(seconds, 0.0, const Alignment(-0.82, -0.72), const _Triangle()),
+              _shape(
+                seconds,
+                0.15,
+                const Alignment(0.8, -0.55),
+                Container(width: 30, height: 30, decoration: const BoxDecoration(color: AppColors.pink, shape: BoxShape.circle)),
+              ),
+              _shape(
+                seconds,
+                0.3,
+                const Alignment(0.78, 0.72),
+                Transform.rotate(angle: 0.17, child: Container(width: 84, height: 28, color: AppColors.lime)),
+              ),
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Transform.scale(
+                      scale: houseScale,
+                      child: CustomPaint(size: const Size(150, 150 * 110 / 120), painter: _HousePainter(seconds)),
+                    ),
+                    const SizedBox(height: 14),
+                    // Name: revealed left to right while sliding up.
+                    Opacity(
+                      opacity: nameReveal,
+                      child: Transform.translate(
+                        offset: Offset(0, 12 * (1 - nameReveal)),
+                        child: ShaderMask(
+                          blendMode: BlendMode.dstIn,
+                          shaderCallback: (rect) => LinearGradient(
+                            colors: const [Colors.white, Colors.white, Colors.transparent],
+                            stops: [0, (nameReveal * 1.35 - 0.35).clamp(0.0, 1.0), (nameReveal * 1.35).clamp(0.0, 1.0)],
+                          ).createShader(rect),
+                          child: Text(
+                            AppInfo.name,
+                            style: AppText.screenTitle.copyWith(fontSize: 40, fontWeight: FontWeight.w800, letterSpacing: -0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // The blue / pink / lime band from the buttons, growing from the middle.
+                    Transform.scale(
+                      scaleX: band.clamp(0.0, 1.2),
+                      child: Opacity(
+                        opacity: band.clamp(0.0, 1.0),
+                        child: const _TriBand(),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Opacity(
+                      opacity: tagline,
+                      child: Transform.translate(
+                        offset: Offset(0, 10 * (1 - tagline)),
+                        child: const Text(AppInfo.tagline, style: AppText.bodyMuted),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                _fadeUp(
-                  seconds,
-                  1.2,
-                  Text(
-                    AppInfo.name,
-                    style: AppText.screenTitle.copyWith(fontSize: 38, fontWeight: FontWeight.w800, letterSpacing: -0.5),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _fadeUp(seconds, 1.35, const Text(AppInfo.tagline, style: AppText.bodyMuted)),
-              ],
-            );
-          },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _TriBand extends StatelessWidget {
+  const _TriBand();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(3),
+      child: SizedBox(
+        width: 96,
+        height: 6,
+        child: Row(
+          children: const [
+            Expanded(child: ColoredBox(color: AppColors.blue, child: SizedBox.expand())),
+            Expanded(child: ColoredBox(color: AppColors.pink, child: SizedBox.expand())),
+            Expanded(child: ColoredBox(color: AppColors.lime, child: SizedBox.expand())),
+          ],
         ),
       ),
     );
   }
+}
+
+class _Triangle extends StatelessWidget {
+  const _Triangle();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(size: const Size(46, 44), painter: _TrianglePainter());
+  }
+}
+
+class _TrianglePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width, 0)
+      ..lineTo(0, size.height * 0.62)
+      ..lineTo(size.width * 0.85, size.height)
+      ..close();
+    canvas.drawPath(path, Paint()..color = AppColors.blue);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Draws the NestSplit house in the prototype's 120 x 110 box, animating each piece in turn.

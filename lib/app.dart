@@ -73,9 +73,17 @@ class _SplashGateState extends State<_SplashGate> {
 
   @override
   Widget build(BuildContext context) {
-    if (_splashVisible) {
-      return SplashScreen(onFinished: () => setState(() => _splashVisible = false));
-    }
-    return widget.child;
+    // Cross-fade from the splash to the login (or app) screen.
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 450),
+      switchInCurve: Curves.easeOut,
+      switchOutCurve: Curves.easeIn,
+      child: _splashVisible
+          ? SplashScreen(
+              key: const ValueKey('splash'),
+              onFinished: () => setState(() => _splashVisible = false),
+            )
+          : KeyedSubtree(key: const ValueKey('app'), child: widget.child),
+    );
   }
 }
