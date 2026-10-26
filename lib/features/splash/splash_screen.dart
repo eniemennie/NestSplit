@@ -30,7 +30,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 2700));
+    // "preserve" keeps the full 2.7 s even when the phone has animations turned down
+    // (battery saver or "Remove animations"), which would otherwise make it flash by.
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2700),
+      animationBehavior: AnimationBehavior.preserve,
+    );
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) widget.onFinished();
     });
