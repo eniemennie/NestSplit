@@ -30,13 +30,12 @@ flutter_launcher_icons:
   remove_alpha_ios: true
 
 flutter_native_splash:
-  color: "#75B6E7"
-  image: assets/images/logo_foreground.png
+  # Plain off-white like the prototype; the Flutter splash then builds the house piece by piece.
+  color: "#F5F6F8"
   fullscreen: true
   android_12:
-    color: "#75B6E7"
-    image: assets/images/logo_foreground.png
-    icon_background_color: "#75B6E7"
+    color: "#F5F6F8"
+    icon_background_color: "#F5F6F8"
 
 flutter:
   uses-material-design: true
